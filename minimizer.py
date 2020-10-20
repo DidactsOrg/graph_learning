@@ -10,8 +10,6 @@ from scipy.spatial import Delaunay
 from sklearn.metrics.pairwise import euclidean_distances
 from numpy import linalg as LA
 
-n_sensors = 127
-
 class Minimizer():
     """
     A class to minimize an objective function
