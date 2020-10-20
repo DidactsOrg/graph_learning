@@ -33,7 +33,7 @@ class Minimizer():
         param L: Laplacian
         return: flatten Laplacian
         """
-        assert L.shape == (n_sensors, n_sensors)
+        assert L.shape == (self.n_sensors, self.n_sensors) 
         return L.flatten()
 
     def to_matrix(self, vec):
@@ -42,8 +42,8 @@ class Minimizer():
         param vec: 1D vector
         return: matrix
         """
-        assert vec.shape == (n_sensors*n_sensors, )
-        return vec[:n_sensors*n_sensors].reshape(n_sensors, n_sensors)
+        assert vec.shape == (self.n_sensors*self.n_sensors, )
+        return vec[:self.n_sensors*self.n_sensors].reshape(self.n_sensors, self.n_sensors)
     
     def objective_function(self, L):
         """
@@ -51,7 +51,7 @@ class Minimizer():
         param L: Laplacian (see, https://arxiv.org/abs/1601.02513)
         return: objective_function
         """
-        if L.shape != (n_sensors, n_sensors):
+        if L.shape != (self.n_sensors, self.n_sensors):
             L = self.to_matrix(L)
 
         tr = np.trace(np.matmul(self.S, L))
@@ -64,7 +64,7 @@ class Minimizer():
         param L: Laplacian
         return: trace(L)
         """
-        if L.shape != (n_sensors, n_sensors):
+        if L.shape != (self.n_sensors, self.n_sensors):
             L = self.to_matrix(L)
 
         tr = np.trace(L)
@@ -77,7 +77,7 @@ class Minimizer():
         param L: Laplacian
         return: constraint function
         """
-        if L.shape != (n_sensors, n_sensors):
+        if L.shape != (self.n_sensors, self.n_sensors):
             L = self.to_matrix(L)
 
         tr = np.trace(np.matmul(self.S, L))
