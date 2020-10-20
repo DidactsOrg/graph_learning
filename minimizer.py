@@ -2,12 +2,7 @@
 
 import pickle
 import numpy as np
-import straxen
-import matplotlib.pyplot as plt
-import networkx as nx
 from scipy.optimize import minimize
-from scipy.spatial import Delaunay
-from sklearn.metrics.pairwise import euclidean_distances
 from numpy import linalg as LA
 
 class Minimizer():
