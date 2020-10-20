@@ -16,9 +16,9 @@ class Minimizer():
         self.alpha = alpha
         self.S = S
         """
-        Scipy uses a list of objects specifying constraints
-        to the optimization problem
-        inequality means that it is to be non-negative
+        scipy uses a list of objects specifying constraints
+        to the optimization problem.
+        Inequality means that it is to be non-negative
         """
         con1 = con1 = {'type': 'ineq', 'fun': self.constraint1}
         con2 = {'type': 'ineq', 'fun': self.constraint2}
@@ -26,19 +26,21 @@ class Minimizer():
         self.cons = ([con1, con2])
 
     def to_vector(self, L):
-        """scipy.optimize.minmize uses 1D vectors, then we
-        flat the matrix
+        """
+        scipy.optimize.minmize uses 1D vectors,
+        therefore we flat the matrix
         (this is just a workaround, please provide input if you can)
         param L: Laplacian
-        return : flatten Laplacian
+        return: flatten Laplacian
         """
         assert L.shape == (n_sensors, n_sensors)
         return L.flatten()
 
     def to_matrix(self, vec):
-        """scipy.optimize.minmize uses 1D vectors
+        """
+        scipy.optimize.minmize uses 1D vectors
         param vec: 1D vector
-        return : matrix
+        return: matrix
         """
         assert vec.shape == (n_sensors*n_sensors, )
         return vec[:n_sensors*n_sensors].reshape(n_sensors, n_sensors)
@@ -47,8 +49,7 @@ class Minimizer():
         """
         objective function
         param L: Laplacian (see, https://arxiv.org/abs/1601.02513)
-        param alpha: alpha parameter, to avoid an over-connected
-        graph (see, https://arxiv.org/abs/1601.02513)
+        return: objective_function
         """
         if L.shape != (n_sensors, n_sensors):
             L = self.to_matrix(L)
@@ -60,6 +61,7 @@ class Minimizer():
         """
         constraint trace(L)>0, on https://arxiv.org/abs/1601.02513
         trace(L)>s where s is the number of nodes
+        param L: Laplacian
         return: trace(L)
         """
         if L.shape != (n_sensors, n_sensors):
@@ -72,6 +74,8 @@ class Minimizer():
         """
         constraint tr + alpha*LA.norm(L, 'fro')>0,
         objective function must be positive
+        param L: Laplacian
+        return: constraint function
         """
         if L.shape != (n_sensors, n_sensors):
             L = self.to_matrix(L)
@@ -82,6 +86,8 @@ class Minimizer():
     def Optimization(self, L0, maxiter):
         """
         Optimization, method a Trust region
+        param L0: initial guess
+        param maxiter: maximum of iterations
         return: result (Laplacian)
         """        
         result = minimize(self.objective_function, self.to_vector(L0),
