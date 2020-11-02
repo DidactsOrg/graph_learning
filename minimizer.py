@@ -20,11 +20,13 @@ class Minimizer():
         to the optimization problem.
         Inequality means that it is to be non-negative
         """
-        con1 = con1 = {'type': 'ineq', 'fun': self.constraint1}
+        con1 = {'type': 'ineq', 'fun': self.constraint1}
         con2 = {'type': 'ineq', 'fun': self.constraint2}
+        con3 = {'type': 'ineq', 'fun': self.constraint3}
 
-        self.cons = ([con1, con2])
+        self.cons = ([con1, con2, con3])
 
+        print('alpha',self.alpha)
     def to_vector(self, L):
         """
         scipy.optimize.minmize uses 1D vectors,
@@ -54,8 +56,16 @@ class Minimizer():
         if L.shape != (self.n_sensors, self.n_sensors):
             L = self.to_matrix(L)
 
-        tr = np.trace(np.matmul(self.S, L))
-        return tr + self.alpha*LA.norm(L, 'fro')
+        # off diagonal elements
+        i = np.ones((self.n_sensors, self.n_sensors))
+        np.fill_diagonal(i,0)
+        L_off = L*i
+        
+        tr = np.trace(np.matmul(L, self.S))
+        
+        print('tr', tr)
+        print('norm', self.alpha*LA.norm(L_off, 1))
+        return tr + self.alpha*LA.norm(L_off, 1)
 
     def constraint1(self, L):
         """
@@ -66,9 +76,8 @@ class Minimizer():
         """
         if L.shape != (self.n_sensors, self.n_sensors):
             L = self.to_matrix(L)
-
-        tr = np.trace(L)
-        return tr
+        
+        return np.trace(L) - self.n_sensors
 
     def constraint2(self, L):
         """
@@ -79,9 +88,25 @@ class Minimizer():
         """
         if L.shape != (self.n_sensors, self.n_sensors):
             L = self.to_matrix(L)
+            
+        # off diagonal elements
+        i = np.ones((self.n_sensors, self.n_sensors))
+        np.fill_diagonal(i,0)
+        L_off = L*i
+        
+        tr = np.trace(np.matmul(L, self.S))
+        return tr + self.alpha*LA.norm(L_off, 1)
 
-        tr = np.trace(np.matmul(self.S, L))
-        return tr + self.alpha*LA.norm(L, 'fro')
+    def constraint3(self, L):
+        """
+        constraint L must be a symmetric matrix
+        param L: Laplacian
+        return: 1, if is symmetric, -999 if is not 
+        """ 
+        if np.allclose(L, L.T, atol=1e-06):
+            return 1.0
+        else:
+            return -999.0
 
     def Optimization(self, L0, maxiter):
         """
@@ -93,7 +118,7 @@ class Minimizer():
         result = minimize(self.objective_function, self.to_vector(L0),
                           method='trust-constr',
                           constraints=self.cons,
-                          options={'maxiter': maxiter, 'verbose': 3, 'gtol': 1e-10})
+                          options={'maxiter': maxiter, 'verbose': 3, 'gtol': 1e-8})
         
         result.x = self.to_matrix(result.x)
         return result
