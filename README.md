@@ -1,2 +1,8 @@
 # graph_learning
-An example on how to learn a graph using smooth signals. This example uses synthetic data from xenon1t
+
+Notebooks(scripts) on graph learning using smooth signals
+
+|File name    |Description    |
+|--------     |--------       |
+|graph_learning.ipynb|An example on how to do graph learning, it uses WFsim data|
+|minimizer.py| Minimizer routine based on scipy.optimize.minimize|
