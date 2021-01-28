@@ -26,7 +26,6 @@ class Minimizer():
 
         self.cons = ([con1, con2, con3])
 
-        print('alpha',self.alpha)
     def to_vector(self, L):
         """
         scipy.optimize.minmize uses 1D vectors,
@@ -63,8 +62,6 @@ class Minimizer():
         
         tr = np.trace(np.matmul(L, self.S))
         
-        print('tr', tr)
-        print('norm', self.alpha*LA.norm(L_off, 1))
         return tr + self.alpha*LA.norm(L_off, 1)
 
     def constraint1(self, L):
